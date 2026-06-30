@@ -4,7 +4,6 @@ import { prisma } from '../utils/prisma';
 import { ApiResponse } from '../utils/apiResponse';
 import { AuthRequest } from '../middleware/auth';
 import { AppError } from '../middleware/errorHandler';
-import { StockStatus, MetalType, Purity } from '@prisma/client';
 import { generateProductId, generateBarcode } from '../utils/generators';
 
 const inventorySchema = z.object({
@@ -13,8 +12,8 @@ const inventorySchema = z.object({
   categoryId: z.string().uuid().optional(),
   subCategoryId: z.string().uuid().optional(),
   collection: z.string().optional(),
-  metalType: z.nativeEnum(MetalType).default('GOLD'),
-  purity: z.nativeEnum(Purity).default('K22'),
+  metalType: z.string().default('GOLD'),
+  purity: z.string().default('K22'),
   weight: z.number().positive(),
   stoneType: z.string().optional(),
   stoneWeight: z.number().optional(),
@@ -34,6 +33,12 @@ const inventorySchema = z.object({
   notes: z.string().optional(),
   barcode: z.string().optional(),
 });
+
+const calcStockStatus = (qty: number, minQty: number): string => {
+  if (qty === 0) return 'OUT_OF_STOCK';
+  if (qty <= minQty) return 'LOW_STOCK';
+  return 'IN_STOCK';
+};
 
 export const getInventory = async (req: AuthRequest, res: Response): Promise<void> => {
   const page = parseInt(req.query.page as string) || 1;
@@ -93,12 +98,8 @@ export const createInventory = async (req: AuthRequest, res: Response): Promise<
     data: {
       ...body,
       productId,
-      barcode,
-      stockStatus: body.quantity === 0
-        ? StockStatus.OUT_OF_STOCK
-        : body.quantity <= body.minQuantity
-          ? StockStatus.LOW_STOCK
-          : StockStatus.IN_STOCK,
+      barcode: barcode as string,
+      stockStatus: calcStockStatus(body.quantity, body.minQuantity),
     },
     include: { category: true, subCategory: true },
   });
@@ -119,11 +120,7 @@ export const updateInventory = async (req: AuthRequest, res: Response): Promise<
     where: { id: req.params.id },
     data: {
       ...body,
-      stockStatus: qty === 0
-        ? StockStatus.OUT_OF_STOCK
-        : qty <= minQty
-          ? StockStatus.LOW_STOCK
-          : StockStatus.IN_STOCK,
+      stockStatus: calcStockStatus(qty, minQty),
     },
     include: { category: true, subCategory: true },
   });
@@ -135,7 +132,6 @@ export const deleteInventory = async (req: AuthRequest, res: Response): Promise<
   const existing = await prisma.inventory.findUnique({ where: { id: req.params.id } });
   if (!existing) throw new AppError('Item not found', 404);
 
-  // Soft delete
   await prisma.inventory.update({ where: { id: req.params.id }, data: { isActive: false } });
   ApiResponse.success(res, null, 'Item deleted');
 };
@@ -144,7 +140,7 @@ export const getLowStock = async (req: AuthRequest, res: Response): Promise<void
   const items = await prisma.inventory.findMany({
     where: {
       isActive: true,
-      stockStatus: { in: [StockStatus.LOW_STOCK, StockStatus.OUT_OF_STOCK] },
+      stockStatus: { in: ['LOW_STOCK', 'OUT_OF_STOCK'] },
     },
     include: { category: true },
     orderBy: { quantity: 'asc' },
@@ -169,8 +165,8 @@ export const bulkImport = async (req: AuthRequest, res: Response): Promise<void>
         data: {
           ...body,
           productId,
-          barcode,
-          stockStatus: body.quantity === 0 ? 'OUT_OF_STOCK' : body.quantity <= body.minQuantity ? 'LOW_STOCK' : 'IN_STOCK',
+          barcode: barcode as string,
+          stockStatus: calcStockStatus(body.quantity, body.minQuantity),
         },
       });
       results.created++;
