@@ -1,0 +1,10 @@
+electron/
+dist-installer/
+*.bat
+*.db
+*.db-journal
+backend/jewelry_store.db
+frontend/node_modules
+backend/node_modules
+node_modules
+.git

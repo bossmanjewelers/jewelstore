@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root { --background: 0 0% 100%; --foreground: 224 71.4% 4.1%; --primary: 38 92% 50%; --primary-foreground: 0 0% 100%; --secondary: 220 14.3% 95.9%; --muted: 220 14.3% 95.9%; --muted-foreground: 220 8.9% 46.1%; --border: 220 13% 91%; --ring: 38 92% 50%; --radius: 0.75rem; }
+  .dark { --background: 224 71.4% 4.1%; --foreground: 210 20% 98%; --primary: 38 92% 50%; --border: 215 27.9% 16.9%; }
+}
+@layer base { * { @apply border-border; } body { @apply bg-background text-foreground; } }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-thumb { @apply bg-border rounded-full; }
