@@ -23,10 +23,10 @@ const registerSchema = z.object({
 
 const generateTokens = (payload: { id: string; email: string; role: string; name: string }) => {
   const accessToken = jwt.sign(payload, config.jwt.secret, {
-    expiresIn: config.jwt.expiresIn as string,
+    expiresIn: config.jwt.expiresIn as any,
   });
   const refreshToken = jwt.sign(payload, config.jwt.refreshSecret, {
-    expiresIn: config.jwt.refreshExpiresIn as string,
+    expiresIn: config.jwt.refreshExpiresIn as any,
   });
   return { accessToken, refreshToken };
 };
