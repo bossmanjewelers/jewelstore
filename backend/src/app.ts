@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import 'express-async-errors'; // catch async route errors in Express 4
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
