@@ -269,6 +269,33 @@ async function initDatabase(): Promise<void> {
         CONSTRAINT "notifications_pkey" PRIMARY KEY ("id")
       )
     `);
+    
+    // Seed admin user if none exists
+    try {
+      const bcrypt = require('bcryptjs');
+      const rows = await prisma.$queryRawUnsafe('SELECT COUNT(*) as cnt FROM users');
+      const cnt = Number((rows as any[])[0]?.cnt || 0);
+      if (cnt === 0) {
+        const hash = await bcrypt.hash('Admin@123', 12);
+        const uid = require('uuid').v4();
+        await prisma.$executeRawUnsafe(
+          `INSERT INTO "users" ("id","name","email","password","role","isActive","twoFactorEnabled","createdAt","updatedAt")
+           VALUES ($1,'Admin','admin@jewelstore.com',$2,'ADMIN',true,false,NOW(),NOW())`,
+          uid, hash
+        );
+        // Seed store settings
+        const sid = require('uuid').v4();
+        await prisma.$executeRawUnsafe(
+          `INSERT INTO "store_settings" ("id","storeName","currency","currencySymbol","taxRate","goldRate","invoicePrefix","createdAt","updatedAt")
+           VALUES ($1,'My Jewelry Store','INR','₹',3,0,'INV',NOW(),NOW())`,
+          sid
+        );
+        logger.info('✅ Admin user and store settings seeded');
+      }
+    } catch (seedErr: any) {
+      logger.warn('Seed skipped:', seedErr?.message?.slice(0,100));
+    }
+
     logger.info('✅ Database schema initialized');
   } catch (err: any) {
     if (err?.message?.includes('already exists')) {
