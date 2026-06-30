@@ -104,6 +104,12 @@ if (require.main === module) {
   });
 }
 
+
+// Prevent unhandled async rejections from crashing the process (Express 4 limitation)
+process.on('unhandledRejection', (reason: any) => {
+  logger.error('Unhandled promise rejection (non-fatal):', reason?.message || reason);
+});
+
 process.on('SIGTERM', async () => {
   await prisma.$disconnect();
   process.exit(0);
