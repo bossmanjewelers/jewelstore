@@ -5,9 +5,9 @@
     "buildCommand": "npm run build"
   },
   "deploy": {
-    "startCommand": "node backend/dist/app.js & sleep 30 && cd backend && ./node_modules/.bin/prisma migrate deploy; wait",
+    "startCommand": "cd backend && ./node_modules/.bin/prisma db push --skip-generate; cd ..; node backend/dist/app.js",
     "healthcheckPath": "/health",
-    "healthcheckTimeout": 60,
+    "healthcheckTimeout": 120,
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 3
   }
