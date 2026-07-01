@@ -1,11 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  :root { --background: 0 0% 100%; --foreground: 224 71.4% 4.1%; --primary: 38 92% 50%; --primary-foreground: 0 0% 100%; --secondary: 220 14.3% 95.9%; --muted: 220 14.3% 95.9%; --muted-foreground: 220 8.9% 46.1%; --border: 220 13% 91%; --ring: 38 92% 50%; --radius: 0.75rem; }
-  .dark { --background: 224 71.4% 4.1%; --foreground: 210 20% 98%; --primary: 38 92% 50%; --border: 215 27.9% 16.9%; }
+  :root {
+    /* Warm luxury light palette */
+    --background: 36 20% 97%;
+    --foreground: 20 14% 8%;
+    --card: 0 0% 100%;
+    --card-foreground: 20 14% 8%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 14% 8%;
+    --primary: 43 51% 54%;        /* gold #C9A84C */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 36 18% 93%;
+    --secondary-foreground: 20 14% 20%;
+    --muted: 36 15% 94%;
+    --muted-foreground: 20 8% 50%;
+    --accent: 43 51% 54%;
+   0--accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 36 14% 88%;
+    --input: 36 14% 88%;
+    --ring: 43 51% 54%;
+ 0   --radius: 0.625rem;
+
+    /* Luxury custom vars */
+    --gold: #C9A84C;
+    --gold-light: #E8D48A;
+    --gold-dark: #9E7B2F;
+    --sidebar-bg: #080808;
+    --sidebar-border: #1c1c1c;
+  }
+
+  .dark {
+    --background: 0 0% 5%;        /* #0d0d0d */
+    --foreground: 36 15% 92%;
+    --card: 0 0% 7%;              /* #121212 */
+    --card-foreground: 36 15% 92%;
+    --popover: 0 0% 7%;
+    --popover-foreground: 36 15% 92%;
+    --primary: 43 51% 54%;
+    --primary-foreground: 0 0% 5%;
+    --secondary: 0 0% 10%;
+    --secondary-foreground: 36 15% 80%;
+    --muted: 0 0% 10%;
+    --muted-foreground: 0 0% 50%;
+    --accent: 43 51% 54%;
+    --accent-foreground: 0 0% 5%;
+    --destructive: 0 62% 35%;
+    --destructive-foreground: 36 15% 92%;
+    --border: 0 0% 14%;          /* #242424 */
+    --input: 0 0% 12%;
+    --ring: 43 51% 54%;
+  }
 }
-@layer base { * { @apply border-border; } body { @apply bg-background text-foreground; } }
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-thumb { @apply bg-border rounded-full; }
+
+@layer base {
+  * { @apply border-border; }
+
+  html {
+   0-webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: 
